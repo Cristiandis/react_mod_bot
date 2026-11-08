@@ -567,6 +567,9 @@ function renderDashboardPage({
               <label style="display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">LOG CHANNEL</label>
               <select name="log_channel_id" class="select">
                 <option value="none">Disabled (No logs)</option>
+                ${settings.log_channel_id && !textChannels.some(ch => ch.id === settings.log_channel_id) ? `
+                  <option value="${escapeHtml(settings.log_channel_id)}" selected>Unavailable channel (${escapeHtml(settings.log_channel_id)})</option>
+                ` : ''}
                 ${textChannels.map(ch => `
                   <option value="${ch.id}" ${settings.log_channel_id === ch.id ? 'selected' : ''}>#${escapeHtml(ch.name)}</option>
                 `).join('')}

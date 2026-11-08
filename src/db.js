@@ -6,6 +6,7 @@ const DB_PATH = process.env.DB_PATH || 'data/reaction_mod.sqlite';
 mkdirSync(dirname(DB_PATH), { recursive: true });
 
 const db = new Database(DB_PATH);
+db.run('PRAGMA busy_timeout = 5000;');
 db.run('PRAGMA journal_mode = WAL;');
 
 db.run(`
@@ -34,6 +35,22 @@ const settingsCache = new Map();
 const regexCache = new Map();
 const sessions = new Map();
 
+let lastDataVersion = readDataVersion();
+
+function readDataVersion() {
+  return db.query('PRAGMA data_version').get().data_version;
+}
+
+function invalidateIfStale() {
+  const current = readDataVersion();
+  if (current !== lastDataVersion) {
+    lastDataVersion = current;
+    badWordsCache.clear();
+    settingsCache.clear();
+    regexCache.clear();
+  }
+}
+
 function syncGuildCache(guildId) {
   const words = db.query('SELECT word FROM bad_words WHERE guild_id = ?').values(guildId).flat();
   badWordsCache.set(guildId, words);
@@ -46,11 +63,13 @@ export const database = {
   },
 
   getBadWordsList(guildId) {
+    invalidateIfStale();
     if (!badWordsCache.has(guildId)) syncGuildCache(guildId);
     return badWordsCache.get(guildId) || [];
   },
 
   getGuildRegex(guildId) {
+    invalidateIfStale();
     if (!regexCache.has(guildId)) syncGuildCache(guildId);
     return regexCache.get(guildId);
   },
@@ -87,6 +106,7 @@ export const database = {
   },
 
   getGuildSettings(guildId) {
+    invalidateIfStale();
     if (settingsCache.has(guildId)) return settingsCache.get(guildId);
     const row = db.query('SELECT enabled, match_mode, clear_mode, log_channel_id FROM guild_settings WHERE guild_id = ?').get(guildId);
     const settings = {
