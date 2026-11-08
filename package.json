@@ -1,0 +1,17 @@
+{
+  "name": "react_mod_bot",
+  "version": "1.0.0",
+  "description": "Discord bot designed for Bun that detects text reactions and clears bad words, with a minimal web panel.",
+  "license": "MIT",
+  "author": "Cristiandis",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "bun src/index.js",
+    "dev": "bun --watch src/index.js",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "discord.js": "^14.28.1"
+  }
+}

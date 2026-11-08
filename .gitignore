@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+.bun/
+
+# Environment variables & secrets (do not commit sensitive tokens/keys)
+.env
+.env*.local
+!.env.example
+
+# Local SQLite databases & runtime data
+data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun.log*
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# IDE & Editor files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+
+# Temporary directories & caches
+tmp/
+temp/
+.cache/
